@@ -76,7 +76,7 @@ class RedisSessionStore < ActionDispatch::Session::AbstractStore
 
   def verify_handlers!
     %w(on_redis_down on_session_load_error).each do |h|
-      next unless (handler = public_send(h)) && !handler.respond_to?(:call)
+      next unless (handler = send(h)) && !handler.respond_to?(:call)
 
       raise ArgumentError, "#{h} handler is not callable"
     end
@@ -104,7 +104,7 @@ class RedisSessionStore < ActionDispatch::Session::AbstractStore
     begin
       data ? decode(data) : nil
     rescue => e
-      destroy_session_from_sid(sid, drop: true)
+      destroy_session_from_sid(sid, :drop => true)
       on_session_load_error.call(e, sid) if on_session_load_error
       nil
     end
@@ -133,14 +133,14 @@ class RedisSessionStore < ActionDispatch::Session::AbstractStore
   end
 
   def destroy_session(env, sid, options)
-    destroy_session_from_sid(sid, (options || {}).to_hash.merge(env: env))
+    destroy_session_from_sid(sid, (options || {}).to_hash.merge(:env => env))
   end
   alias delete_session destroy_session
 
   def destroy(env)
     if env['rack.request.cookie_hash'] &&
        (sid = env['rack.request.cookie_hash'][key])
-      destroy_session_from_sid(sid, drop: true, env: env)
+      destroy_session_from_sid(sid, :drop => true, :env => env)
     end
     false
   end
@@ -165,11 +165,11 @@ class RedisSessionStore < ActionDispatch::Session::AbstractStore
   # Uses built-in JSON library to encode/decode session
   class JsonSerializer
     def self.load(value)
-      JSON.parse(value, quirks_mode: true)
+      JSON.parse(value, :quirks_mode => true)
     end
 
     def self.dump(value)
-      JSON.generate(value, quirks_mode: true)
+      JSON.generate(value, :quirks_mode => true)
     end
   end
 
