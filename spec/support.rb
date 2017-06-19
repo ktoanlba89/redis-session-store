@@ -8,8 +8,8 @@ unless defined?(Rack::Session::Abstract::ENV_SESSION_OPTIONS_KEY)
   end
 end
 
-unless defined?(ActionDispatch::Session::AbstractStore)
-  module ActionDispatch
+unless defined?(ActionController::Session::AbstractStore)
+  module ActionController
     module Session
       class AbstractStore
         ENV_SESSION_OPTIONS_KEY = 'rack.session.options'.freeze

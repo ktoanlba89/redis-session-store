@@ -2,7 +2,7 @@ require 'redis'
 
 # Redis session storage for Rails, and for Rails only. Derived from
 # the MemCacheStore code, simply dropping in Redis instead.
-class RedisSessionStore < ActionDispatch::Session::AbstractStore
+class RedisSessionStore < ActionController::Session::AbstractStore
   VERSION = '0.9.1'.freeze
   # Rails 3.1 and beyond defines the constant elsewhere
   unless defined?(ENV_SESSION_OPTIONS_KEY)
